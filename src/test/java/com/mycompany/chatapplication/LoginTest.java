@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author setha
  */
 public class LoginTest {
-    
+    //Implement JUnit unit test suite for user authentication
     @Test
     public void testCheckUserName_Success() {
         Login login = new Login();
