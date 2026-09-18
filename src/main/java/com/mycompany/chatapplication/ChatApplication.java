@@ -13,7 +13,7 @@ public class ChatApplication {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         Login userLogin = new Login();
-
+//interface for registration and login workflows
         System.out.println("=== USER REGISTRATION ===");
         
         System.out.print("Enter First Name: ");
