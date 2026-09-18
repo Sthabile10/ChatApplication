@@ -23,7 +23,7 @@ public class ChatApplication {
         System.out.print("Enter Last Name: ");
         String lastName = scanner.nextLine();
         userLogin.setLastName(lastName);
-
+// This is to check the condition
         while (true) {
             System.out.print("Enter Username (max 5 chars & must include '_'): ");
             String username = scanner.nextLine();
