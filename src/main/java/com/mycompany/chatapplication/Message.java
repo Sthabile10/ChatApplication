@@ -9,11 +9,11 @@ import java.io.IOException;
  *
  * @author setha
  */
-public class Message {
-    private String messageID;
-    private String recipientCell;
-    private String messageBody;
-    private String messageHash;
+public final class Message {
+    private final String messageID;
+    private final String recipientCell;
+    private final String messageBody;
+    private final String messageHash;
     private String sentOption;
     private static int totalMessagesSent = 0;
 
@@ -61,18 +61,22 @@ public class Message {
     
     public String SentMessage(int choice) {
         switch (choice) {
-            case 1:
+            case 1 -> {
                 totalMessagesSent++;
                 this.sentOption = "Sent";
                 return "Message successfully sent.";
-            case 2:
+            }
+            case 2 -> {
                 this.sentOption = "Disregarded";
                 return "Press 0 to delete the message.";
-            case 3:
+            }
+            case 3 -> {
                 this.sentOption = "Stored";
                 return "Message successfully stored.";
-            default:
+            }
+            default -> {
                 return "Invalid choice.";
+            }
         }
     }
 
