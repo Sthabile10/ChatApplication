@@ -171,7 +171,7 @@ public class ChatApplication {
                     break;
 
                 case 2:
-                    System.out.println("Coming Soon.");
+                    System.out.println("Coming Soon...");
                     break;
 
                 case 3:
