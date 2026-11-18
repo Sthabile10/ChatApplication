@@ -3,8 +3,10 @@
  */
 
 package com.mycompany.chatapplication;
+
 import java.util.Random;
 import java.util.Scanner;
+
 /**
  *
  * @author setha
@@ -61,7 +63,7 @@ public class ChatApplication {
                 System.out.println("Cell number successfully captured.");
                 break;
             } else {
-                System.out.println("Cell number is incorrectly formatted or does not contain an international code; please correct the number and try again.");
+                System.out.println("Cell number is incorrectly formatted or does not contain an international code (+27 and 9 digits); please correct the number and try again.");
             }
         }
 
@@ -79,7 +81,7 @@ public class ChatApplication {
         String statusMessage = userLogin.returnLoginStatus(success);
         System.out.println(statusMessage);
 
-        //PART 2: QUICKCHAT MENU
+        //QUICKCHAT MENU
         if (success) {
             runQuickChatMenu(scanner);
         } else {
@@ -89,7 +91,7 @@ public class ChatApplication {
         scanner.close();
     }
 
-        //MENU METHOD
+    //MENU METHOD
     public static void runQuickChatMenu(Scanner scanner) {
         Random random = new Random();
 
@@ -98,12 +100,12 @@ public class ChatApplication {
 
         boolean running = true;
 
-        //Application runs in a loop until user selects Option 3 (Quit)
         while (running) {
             System.out.println("\nPlease choose an option from the menu:");
             System.out.println("1) Send Messages");
             System.out.println("2) Show recently sent messages");
             System.out.println("3) Quit");
+            System.out.println("4) Stored Messages");
             System.out.print("Enter choice: ");
 
             int choice = scanner.nextInt();
@@ -118,20 +120,31 @@ public class ChatApplication {
                     for (int i = 0; i < numMessages; i++) {
                         System.out.println("\n--- Message " + (i + 1) + " of " + numMessages + " ---");
 
-                        //Auto-generate 10-digit Message ID
-                        long random10Digit = 1000000000L + (long)(random.nextDouble() * 9000000000L);
-                        String messageID = String.valueOf(random10Digit);
+                        //Build ID using string manipulation
+                        String randomNumPart = String.valueOf(100000000L + (long)(random.nextDouble() * 900000000L));
+                        String messageID = "MSG".concat(randomNumPart).substring(0, 10);
 
-                        //Capture Recipient Cell Number
-                        System.out.print("Enter Recipient Cell Number (e.g., +27718693002): ");
-                        String recipient = scanner.nextLine();
+                        //Capture Recipient Cell Number with validation loop
+                        String recipient;
+                        Message tempMsg;
+                        while (true) {
+                            System.out.print("Enter Recipient Cell Number (e.g., +27718693002): ");
+                            recipient = scanner.nextLine();
+                            tempMsg = new Message(messageID, recipient, "", i + 1);
+                            if (tempMsg.checkRecipientCell()) {
+                                System.out.println("Cell number is valid.");
+                                break;
+                            } else {
+                                System.out.println("Invalid cell number. Must start with +27 followed by exactly 9 digits. Please re-enter.");
+                            }
+                        }
 
                         //Capture Message Body
                         System.out.print("Enter Message: ");
                         String messageBody = scanner.nextLine();
 
-                        //Create Message Instance using Message.java
-                        Message msg = new Message(messageID, recipient, messageBody);
+                        //Create Message Instance (passing loop counter i + 1 for dynamic hash)
+                        Message msg = new Message(messageID, recipient, messageBody, i + 1);
 
                         //Validate Length (<= 250 characters)
                         String lengthCheck = msg.validateMessageLength();
@@ -140,10 +153,6 @@ public class ChatApplication {
                             i--;
                             continue;
                         }
-
-                        //Validate Recipient Number Format
-                        String cellCheck = msg.checkRecipientCell();
-                        System.out.println(cellCheck);
 
                         //Prompt user action options
                         System.out.println("\nSelect an option:");
@@ -161,9 +170,11 @@ public class ChatApplication {
                             msg.storeMessage();
                         }
 
-                        //Display full details after completion
-                        System.out.println("\n--- Message Details ---");
-                        System.out.println(msg.printMessages());
+                        //Show details ONLY for sent messages
+                        if (actionChoice == 1) {
+                            System.out.println("\n--- Message Details ---");
+                            System.out.println(msg.printMessages());
+                        }
                     }
 
                     //Display accumulated total messages sent
@@ -178,10 +189,63 @@ public class ChatApplication {
                     System.out.println("Exiting QuickChat. Goodbye!");
                     running = false;
                     break;
+                    
+                case 4:
+                    // Stored Messages Sub-Menu
+                    handleStoredMessagesMenu(scanner);
+                    break;
 
                 default:
                     System.out.println("Invalid option. Please try again.");
             }
         }
     }
+
+    // STORED MESSAGES SUB-MENU METHOD (Placed correctly outside runQuickChatMenu)
+    public static void handleStoredMessagesMenu(Scanner scanner) {
+        boolean subRunning = true;
+        while (subRunning) {
+            System.out.println("\n=== STORED MESSAGES MENU ===");
+            System.out.println("a) Display sender and recipient of all stored messages");
+            System.out.println("b) Display the longest stored message");
+            System.out.println("c) Search for a message ID");
+            System.out.println("d) Search for messages by recipient");
+            System.out.println("e) Delete a message using message hash");
+            System.out.println("f) Display full report of all stored messages");
+            System.out.println("g) Return to Main Menu");
+            System.out.print("Enter choice (a-g): ");
+            
+            String choice = scanner.nextLine().trim().toLowerCase();
+            
+            switch (choice) {
+                case "a":
+                    System.out.println("\n--- Sender & Recipient of Stored Messages ---");
+                    break;
+                case "b":
+                    System.out.println("\n--- Longest Stored Message ---");
+                    break;
+                case "c":
+                    System.out.print("Enter Message ID to search: ");
+                    String searchId = scanner.nextLine();
+                    break;
+                case "d":
+                    System.out.print("Enter Recipient cell to search: ");
+                    String searchRecipient = scanner.nextLine();
+                    break;
+                case "e":
+                    System.out.print("Enter Message Hash to delete: ");
+                    String searchHash = scanner.nextLine();
+                    break;
+                case "f":
+                    System.out.println("\n=== STORED MESSAGES REPORT ===");
+                    break;
+                case "g":
+                    subRunning = false;
+                    break;
+                default:
+                    System.out.println("Invalid option. Please choose a-g.");
+            }
+        }
+    }
 }
+
